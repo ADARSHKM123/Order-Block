@@ -1,4 +1,4 @@
-# Image Sorter
+# Order Block
 
 Local-only CLI tool for AI-powered image quality assessment, similarity clustering, and best-pick selection.
 
