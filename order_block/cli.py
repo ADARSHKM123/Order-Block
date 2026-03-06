@@ -149,7 +149,7 @@ def main(argv=None):
             sys.exit(1)
 
     setup_logging(args.output, verbose=args.verbose)
-    logger.info(f"Image Sorter starting...")
+    logger.info(f"Order Block starting...")
     logger.info(f"Input: {args.input}")
     logger.info(f"Output: {args.output}")
 

@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    app_name: str = "Image Sorter"
+    app_name: str = "Order Block"
     app_version: str = "2.0.0"
     host: str = "127.0.0.1"
     port: int = 8000

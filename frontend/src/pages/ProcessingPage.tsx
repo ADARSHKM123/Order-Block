@@ -11,6 +11,7 @@ import {
   Check,
   Loader2,
   StopCircle,
+  AlertTriangle,
 } from 'lucide-react'
 import { api } from '@/api/client'
 
@@ -31,7 +32,7 @@ export function ProcessingPage() {
   const navigate = useNavigate()
   const {
     currentSession, isProcessing, progress, phaseStats,
-    handleProgressEvent, setProcessing, loadResults, processedImages,
+    handleProgressEvent, setProcessing, loadResults, processedImages, warnings,
   } = useSessionStore()
 
   const onEvent = useCallback(
@@ -119,6 +120,18 @@ export function ProcessingPage() {
           )
         })}
       </div>
+
+      {/* Warning banners */}
+      {warnings.length > 0 && (
+        <div className="max-w-2xl mx-auto mb-4 space-y-2">
+          {warnings.map((msg, i) => (
+            <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-sm">
+              <AlertTriangle className="w-4 h-4 shrink-0" />
+              <span>{msg}</span>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Progress bar */}
       {isProcessing && progress && progress.total > 0 && (

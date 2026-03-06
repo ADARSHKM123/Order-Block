@@ -30,6 +30,7 @@ gui = [
     "sqlalchemy>=2.0.0",
     "pydantic-settings>=2.0.0",
     "websockets>=12.0",
+    "imagehash>=4.3.0",
 ]
 all = [
     "order-block[clustering,gui]",

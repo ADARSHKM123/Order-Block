@@ -1,1 +1,1 @@
-"""FastAPI server for Image Sorter GUI."""
+"""FastAPI server for Order Block GUI."""

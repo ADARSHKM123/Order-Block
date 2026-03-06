@@ -52,12 +52,23 @@ def serve_image(
     if data is None:
         raise HTTPException(status_code=404, detail="Session not found")
 
-    # Search for the filename in results
+    # Search for the filename in results (works for completed sessions)
     image_path = None
     for result in data["results"]:
         if result.get("filename") == filename:
             image_path = result.get("original_path")
             break
+
+    # Fallback: resolve from session's input directory.
+    # During processing, results_json is empty but input_path is known.
+    if not image_path:
+        record = db.query(SessionRecord).filter(SessionRecord.id == session_id).first()
+        if record and record.input_path:
+            input_dir = Path(record.input_path).resolve()
+            candidate = (input_dir / filename).resolve()
+            # Prevent path traversal attacks
+            if candidate.is_file() and str(candidate).startswith(str(input_dir)):
+                image_path = str(candidate)
 
     if not image_path:
         raise HTTPException(status_code=404, detail=f"Image not found: {filename}")

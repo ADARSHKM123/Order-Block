@@ -91,7 +91,7 @@ export interface ResultsData {
 }
 
 export interface ProgressEvent {
-  type: 'phase_start' | 'progress' | 'phase_complete' | 'pipeline_complete' | 'error' | 'cancelled' | 'heartbeat' | 'session_info'
+  type: 'phase_start' | 'progress' | 'phase_complete' | 'pipeline_complete' | 'error' | 'cancelled' | 'heartbeat' | 'session_info' | 'warning'
   phase?: string
   current?: number
   total?: number

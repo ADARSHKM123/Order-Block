@@ -23,7 +23,7 @@ logger = logging.getLogger("order_block.server")
 async def lifespan(app: FastAPI):
     """Initialize database on startup."""
     init_db()
-    logger.info(f"Image Sorter GUI running at http://{settings.host}:{settings.port}")
+    logger.info(f"Order Block GUI running at http://{settings.host}:{settings.port}")
     yield
 
 

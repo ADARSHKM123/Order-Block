@@ -35,6 +35,7 @@ interface SessionState {
   progress: ProcessingProgress | null
   phaseStats: Record<string, Record<string, number>>
   processedImages: ProcessedImage[]
+  warnings: string[]
 
   // Actions
   loadSessions: () => Promise<void>
@@ -59,6 +60,7 @@ export const useSessionStore = create<SessionState>((set) => ({
   progress: null,
   phaseStats: {},
   processedImages: [],
+  warnings: [],
 
   loadSessions: async () => {
     const sessions = await api.listSessions()
@@ -82,6 +84,7 @@ export const useSessionStore = create<SessionState>((set) => ({
       progress: null,
       phaseStats: {},
       processedImages: [],
+      warnings: [],
     })
   },
 
@@ -97,7 +100,7 @@ export const useSessionStore = create<SessionState>((set) => ({
   },
 
   startProcessing: async (sessionId, settings) => {
-    set({ isProcessing: true, progress: null, phaseStats: {}, processedImages: [] })
+    set({ isProcessing: true, progress: null, phaseStats: {}, processedImages: [], warnings: [] })
     await api.startProcessing(sessionId, settings as unknown as Record<string, unknown>)
   },
 
@@ -147,6 +150,8 @@ export const useSessionStore = create<SessionState>((set) => ({
         isProcessing: false,
         summary: event.summary || null,
       })
+    } else if (type === 'warning') {
+      set(s => ({ warnings: [...s.warnings, event.message || 'Unknown warning'] }))
     } else if (type === 'error' || type === 'cancelled') {
       set({ isProcessing: false })
     }

@@ -39,7 +39,7 @@ export function Sidebar() {
         <Camera className="w-7 h-7 text-accent shrink-0" />
         {!collapsed && (
           <span className="text-lg font-semibold tracking-tight">
-            ImageSorter
+            Order Block
           </span>
         )}
       </div>

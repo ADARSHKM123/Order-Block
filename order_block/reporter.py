@@ -93,7 +93,7 @@ def write_summary(
     """Write summary.txt with quick stats."""
     summary_path = output_dir / "summary.txt"
     lines = [
-        "Image Sorter - Summary Report",
+        "Order Block - Summary Report",
         "=" * 40,
         f"Total images processed: {total}",
         f"  Good:          {good}",

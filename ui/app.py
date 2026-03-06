@@ -1,4 +1,4 @@
-"""Streamlit review UI for image sorter results."""
+"""Streamlit review UI for Order Block results."""
 
 import csv
 import sys
@@ -27,8 +27,8 @@ def make_thumbnail(image_path: str, max_size: int = 300) -> Image.Image:
 
 
 def main():
-    st.set_page_config(page_title="Image Sorter Review", layout="wide")
-    st.title("Image Sorter - Review UI")
+    st.set_page_config(page_title="Order Block Review", layout="wide")
+    st.title("Order Block - Review UI")
 
     # Get output directory from command line args
     if len(sys.argv) > 1:

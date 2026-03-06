@@ -271,30 +271,65 @@ class ProcessingService:
         progress_q: queue.Queue,
     ):
         fast = settings.get("fast", False)
+        actual_fast = fast
 
+        # --- Determine which clustering backend is available ---
+        _extract_embeddings = None
+        _cluster_embeddings = None
+        _cluster_by_hash = None
+
+        if not fast:
+            try:
+                from order_block.similarity.embeddings import extract_embeddings as _ee
+                from order_block.similarity.clustering import cluster_embeddings as _ce
+                _extract_embeddings = _ee
+                _cluster_embeddings = _ce
+            except ImportError:
+                logger.warning(
+                    "torch/transformers/scikit-learn not installed. "
+                    "Falling back to perceptual hashing."
+                )
+                progress_q.put({
+                    "type": "warning",
+                    "message": "AI clustering unavailable (torch not installed). Using fast hash mode.",
+                })
+                actual_fast = True
+
+        if actual_fast:
+            try:
+                import imagehash  # noqa: F401 – probe availability
+                from order_block.similarity.hashing import cluster_by_hash as _cbh
+                _cluster_by_hash = _cbh
+            except ImportError:
+                logger.warning(
+                    "imagehash not installed. Clustering will be skipped."
+                )
+                progress_q.put({
+                    "type": "warning",
+                    "message": "Clustering unavailable (imagehash not installed). Skipping clustering phase.",
+                })
+                return [], {}
+
+        # --- Run clustering ---
         progress_q.put({
             "type": "progress", "phase": "clustering",
             "current": 1, "total": 3,
-            "step": "computing_hashes" if fast else "loading_model",
+            "step": "computing_hashes" if actual_fast else "loading_model",
         })
 
-        if fast:
-            from order_block.similarity.hashing import cluster_by_hash
-            cluster_labels = cluster_by_hash(
+        if actual_fast:
+            cluster_labels = _cluster_by_hash(
                 [Path(r["original_path"]) for r in results],
                 threshold=settings.get("hash_threshold", 15),
             )
         else:
-            from order_block.similarity.embeddings import extract_embeddings
-            from order_block.similarity.clustering import cluster_embeddings
-
             progress_q.put({
                 "type": "progress", "phase": "clustering",
                 "current": 1, "total": 3, "step": "extracting_embeddings",
             })
 
             image_paths = [Path(r["original_path"]) for r in results]
-            embeddings = extract_embeddings(
+            embeddings = _extract_embeddings(
                 image_paths, batch_size=settings.get("batch_size", 32),
             )
 
@@ -303,7 +338,7 @@ class ProcessingService:
                 "current": 2, "total": 3, "step": "clustering",
             })
 
-            cluster_labels = cluster_embeddings(
+            cluster_labels = _cluster_embeddings(
                 embeddings,
                 eps=settings.get("similarity_threshold", 0.25),
                 min_samples=settings.get("min_cluster_size", 2),
