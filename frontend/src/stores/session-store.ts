@@ -12,6 +12,12 @@ interface ProcessingProgress {
   step?: string
 }
 
+interface ProcessedImage {
+  filename: string
+  category: string
+  score: number
+}
+
 interface SessionState {
   // Session list
   sessions: Session[]
@@ -28,6 +34,7 @@ interface SessionState {
   isProcessing: boolean
   progress: ProcessingProgress | null
   phaseStats: Record<string, Record<string, number>>
+  processedImages: ProcessedImage[]
 
   // Actions
   loadSessions: () => Promise<void>
@@ -51,6 +58,7 @@ export const useSessionStore = create<SessionState>((set) => ({
   isProcessing: false,
   progress: null,
   phaseStats: {},
+  processedImages: [],
 
   loadSessions: async () => {
     const sessions = await api.listSessions()
@@ -73,6 +81,7 @@ export const useSessionStore = create<SessionState>((set) => ({
       summary: null,
       progress: null,
       phaseStats: {},
+      processedImages: [],
     })
   },
 
@@ -88,7 +97,7 @@ export const useSessionStore = create<SessionState>((set) => ({
   },
 
   startProcessing: async (sessionId, settings) => {
-    set({ isProcessing: true, progress: null, phaseStats: {} })
+    set({ isProcessing: true, progress: null, phaseStats: {}, processedImages: [] })
     await api.startProcessing(sessionId, settings as unknown as Record<string, unknown>)
   },
 
@@ -96,15 +105,34 @@ export const useSessionStore = create<SessionState>((set) => ({
     const { type } = event
 
     if (type === 'progress') {
+      const newProgress: ProcessingProgress = {
+        phase: event.phase || '',
+        current: event.current || 0,
+        total: event.total || 0,
+        image: event.image,
+        category: event.category,
+        score: event.score,
+        step: event.step,
+      }
+
+      // Accumulate processed images for the live mosaic
+      if (event.phase === 'quality' && event.status === 'ok' && event.image && event.category) {
+        set(s => ({
+          progress: newProgress,
+          processedImages: [
+            ...s.processedImages,
+            { filename: event.image!, category: event.category!, score: event.score ?? 0 },
+          ],
+        }))
+      } else {
+        set({ progress: newProgress })
+      }
+    } else if (type === 'phase_start') {
       set({
         progress: {
           phase: event.phase || '',
-          current: event.current || 0,
+          current: 0,
           total: event.total || 0,
-          image: event.image,
-          category: event.category,
-          score: event.score,
-          step: event.step,
         },
       })
     } else if (type === 'phase_complete') {
@@ -129,7 +157,7 @@ export const useSessionStore = create<SessionState>((set) => ({
   deleteSession: async (id) => {
     await api.deleteSession(id)
     set(s => ({
-      sessions: s.sessions.filter(s => s.id !== id),
+      sessions: s.sessions.filter(sess => sess.id !== id),
       currentSession: s.currentSession?.id === id ? null : s.currentSession,
     }))
   },

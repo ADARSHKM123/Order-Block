@@ -110,7 +110,7 @@ async def cancel_processing(session_id: str, db: Session = Depends(get_db)):
 _progress_queues: Dict[str, list] = {}
 
 
-@router.websocket("/api/sessions/{session_id}/progress")
+@router.websocket("/sessions/{session_id}/progress")
 async def websocket_progress(websocket: WebSocket, session_id: str):
     """Stream processing progress via WebSocket."""
     await websocket.accept()
