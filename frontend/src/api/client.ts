@@ -56,6 +56,12 @@ export const api = {
       body: JSON.stringify({ path }),
     }),
 
+  // Native folder dialog
+  openFolderDialog: () =>
+    request<{ path: string | null }>('/browse/dialog', {
+      method: 'POST',
+    }),
+
   // Image URLs
   imageUrl: (sessionId: string, filename: string, size?: string) => {
     const params = size ? `?size=${size}` : ''

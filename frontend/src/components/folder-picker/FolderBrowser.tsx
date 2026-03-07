@@ -1,14 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { api } from '@/api/client'
-import type { BrowseResponse } from '@/api/types'
 import { cn } from '@/lib/utils'
 import {
-  Folder,
   FolderOpen,
-  ChevronUp,
-  HardDrive,
-  Image,
-  Check,
+  FolderSearch,
+  Loader2,
+  X,
 } from 'lucide-react'
 
 interface Props {
@@ -18,18 +15,17 @@ interface Props {
 }
 
 export function FolderBrowser({ onSelect, selectedPath, label }: Props) {
-  const [data, setData] = useState<BrowseResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [inputPath, setInputPath] = useState(selectedPath || '')
 
-  const browse = async (path?: string) => {
+  const handleBrowse = async () => {
     setLoading(true)
     setError('')
     try {
-      const res = await api.browse(path)
-      setData(res)
-      setInputPath(res.current_path)
+      const res = await api.openFolderDialog()
+      if (res.path) {
+        onSelect(res.path)
+      }
     } catch (e: any) {
       setError(e.message)
     } finally {
@@ -37,127 +33,67 @@ export function FolderBrowser({ onSelect, selectedPath, label }: Props) {
     }
   }
 
-  useEffect(() => {
-    browse()
-  }, [])
-
-  const handleSubmitPath = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (inputPath.trim()) browse(inputPath.trim())
-  }
-
-  const handleSelectCurrent = () => {
-    if (data) onSelect(data.current_path)
+  const handleClear = () => {
+    onSelect('')
   }
 
   return (
-    <div className="rounded-2xl bg-white shadow-sm overflow-hidden dark:bg-[#1a1a1e] dark:shadow-none dark:border dark:border-white/5">
-      <div className="px-4 py-3 border-b border-gray-100 dark:border-white/5">
-        <p className="text-sm font-medium text-text-secondary">{label}</p>
-        <form onSubmit={handleSubmitPath} className="mt-2 flex gap-2">
-          <input
-            type="text"
-            value={inputPath}
-            onChange={(e) => setInputPath(e.target.value)}
-            className="flex-1 bg-gray-50 dark:bg-[#0a0a0b] border border-gray-200 dark:border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-accent transition-colors"
-            placeholder="Enter path..."
-          />
-          <button
-            type="submit"
-            className="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 rounded-lg transition-colors"
-          >
-            Go
-          </button>
-        </form>
-      </div>
-
-      {error && (
-        <div className="px-4 py-2 text-sm text-overexposed bg-overexposed/10">
-          {error}
-        </div>
+    <div
+      className={cn(
+        'rounded-2xl bg-white shadow-sm overflow-hidden transition-all duration-200 dark:bg-[#1a1a1e] dark:shadow-none dark:border dark:border-white/5',
+        selectedPath && 'ring-2 ring-accent/20',
       )}
+    >
+      <div className="p-6">
+        <p className="text-sm font-medium text-text-secondary mb-4">{label}</p>
 
-      {/* Drives (Windows) */}
-      {data?.drives && (
-        <div className="px-4 py-2 border-b border-gray-100 dark:border-white/5 flex gap-2 flex-wrap">
-          {data.drives.map((drive) => (
+        {/* Selected path display */}
+        {selectedPath ? (
+          <div className="flex items-center gap-3 mb-4 px-4 py-3 rounded-xl bg-accent/5 border border-accent/10">
+            <FolderOpen className="w-5 h-5 text-accent shrink-0" />
+            <span className="text-sm text-text-primary font-medium truncate flex-1">
+              {selectedPath}
+            </span>
             <button
-              key={drive}
-              onClick={() => browse(drive)}
-              className={cn(
-                'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors',
-                data.current_path.startsWith(drive)
-                  ? 'bg-accent/10 text-accent'
-                  : 'text-text-secondary hover:bg-gray-100 dark:hover:bg-white/5',
-              )}
+              onClick={handleClear}
+              className="p-1 rounded-full hover:bg-gray-200/50 dark:hover:bg-white/10 text-text-muted hover:text-text-primary transition-colors shrink-0"
+              title="Clear selection"
             >
-              <HardDrive className="w-3.5 h-3.5" />
-              {drive}
+              <X className="w-3.5 h-3.5" />
             </button>
-          ))}
-        </div>
-      )}
-
-      {/* Navigation */}
-      <div className="px-4 py-2 border-b border-gray-100 dark:border-white/5 flex items-center gap-2">
-        {data?.parent_path && (
-          <button
-            onClick={() => browse(data.parent_path!)}
-            className="flex items-center gap-1 text-sm text-text-secondary hover:text-text-primary transition-colors"
-          >
-            <ChevronUp className="w-4 h-4" />
-            Up
-          </button>
-        )}
-        <span className="text-sm text-text-muted truncate flex-1">
-          {data?.current_path}
-        </span>
-        <button
-          onClick={handleSelectCurrent}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm bg-accent text-white font-medium hover:bg-accent-hover transition-colors"
-        >
-          <Check className="w-3.5 h-3.5" />
-          Select
-        </button>
-      </div>
-
-      {/* File list */}
-      <div className="max-h-64 overflow-auto">
-        {loading ? (
-          <div className="px-4 py-8 text-center text-text-muted text-sm">
-            Loading...
           </div>
         ) : (
-          data?.entries
-            .filter((e) => e.is_dir)
-            .map((entry) => (
-              <button
-                key={entry.path}
-                onClick={() => browse(entry.path)}
-                className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-left"
-              >
-                <Folder className="w-4 h-4 text-accent shrink-0" />
-                <span className="text-sm flex-1 truncate">{entry.name}</span>
-                {entry.image_count != null && entry.image_count > 0 && (
-                  <span className="flex items-center gap-1 text-xs text-text-muted">
-                    <Image className="w-3 h-3" />
-                    {entry.image_count}
-                  </span>
-                )}
-              </button>
-            ))
-        )}
-      </div>
-
-      {/* Selected path display */}
-      {selectedPath && (
-        <div className="px-4 py-2.5 border-t border-gray-100 dark:border-white/5 bg-accent/5">
-          <div className="flex items-center gap-2">
-            <FolderOpen className="w-4 h-4 text-accent" />
-            <span className="text-sm text-accent truncate">{selectedPath}</span>
+          <div className="flex items-center gap-3 mb-4 px-4 py-3 rounded-xl bg-gray-50 dark:bg-white/5 border border-dashed border-gray-200 dark:border-white/10">
+            <FolderSearch className="w-5 h-5 text-text-muted shrink-0" />
+            <span className="text-sm text-text-muted">No folder selected</span>
           </div>
-        </div>
-      )}
+        )}
+
+        {error && (
+          <p className="text-sm text-overexposed mb-3">{error}</p>
+        )}
+
+        {/* Browse button */}
+        <button
+          onClick={handleBrowse}
+          disabled={loading}
+          className={cn(
+            'w-full flex items-center justify-center gap-2.5 px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-200',
+            selectedPath
+              ? 'bg-gray-100 text-text-secondary hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10'
+              : 'bg-gray-900 text-white hover:bg-gray-800 shadow-sm dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100',
+          )}
+        >
+          {loading ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <>
+              <FolderSearch className="w-4 h-4" />
+              {selectedPath ? 'Change Folder' : 'Browse Folder'}
+            </>
+          )}
+        </button>
+      </div>
     </div>
   )
 }

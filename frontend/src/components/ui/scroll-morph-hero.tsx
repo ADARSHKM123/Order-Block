@@ -251,7 +251,8 @@ export default function IntroAnimation({ onGetStarted }: IntroAnimationProps) {
                         transition={{ duration: 1 }}
                         className="text-2xl font-medium tracking-tight text-gray-800 md:text-4xl"
                     >
-                        Sort Your Photos Intelligently
+                        {/* Sort Your Photos Intelligently */}
+                        Intelligent Gallery
                     </motion.h1>
                     <motion.p
                         initial={{ opacity: 0 }}

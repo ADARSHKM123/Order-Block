@@ -69,6 +69,21 @@ def remove_session(session_id: str, db: Session = Depends(get_db)):
     return {"ok": True}
 
 
+@router.post("/browse/dialog")
+def open_folder_dialog():
+    """Open a native OS folder picker dialog and return the selected path."""
+    import tkinter as tk
+    from tkinter import filedialog
+
+    root = tk.Tk()
+    root.withdraw()
+    root.attributes("-topmost", True)
+    root.focus_force()
+    path = filedialog.askdirectory(title="Select Folder")
+    root.destroy()
+    return {"path": path or None}
+
+
 @router.post("/browse", response_model=BrowseResponse)
 def browse_filesystem(req: BrowseRequest):
     """Browse the local filesystem for folder selection."""
