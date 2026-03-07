@@ -51,20 +51,20 @@ export function FolderBrowser({ onSelect, selectedPath, label }: Props) {
   }
 
   return (
-    <div className="border border-border rounded-xl bg-surface">
-      <div className="px-4 py-3 border-b border-border">
+    <div className="rounded-2xl bg-white shadow-sm overflow-hidden dark:bg-[#1a1a1e] dark:shadow-none dark:border dark:border-white/5">
+      <div className="px-4 py-3 border-b border-gray-100 dark:border-white/5">
         <p className="text-sm font-medium text-text-secondary">{label}</p>
         <form onSubmit={handleSubmitPath} className="mt-2 flex gap-2">
           <input
             type="text"
             value={inputPath}
             onChange={(e) => setInputPath(e.target.value)}
-            className="flex-1 bg-background border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-accent transition-colors"
+            className="flex-1 bg-gray-50 dark:bg-[#0a0a0b] border border-gray-200 dark:border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-accent transition-colors"
             placeholder="Enter path..."
           />
           <button
             type="submit"
-            className="px-3 py-2 text-sm bg-surface-hover hover:bg-surface-active rounded-lg transition-colors"
+            className="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 rounded-lg transition-colors"
           >
             Go
           </button>
@@ -79,7 +79,7 @@ export function FolderBrowser({ onSelect, selectedPath, label }: Props) {
 
       {/* Drives (Windows) */}
       {data?.drives && (
-        <div className="px-4 py-2 border-b border-border flex gap-2 flex-wrap">
+        <div className="px-4 py-2 border-b border-gray-100 dark:border-white/5 flex gap-2 flex-wrap">
           {data.drives.map((drive) => (
             <button
               key={drive}
@@ -88,7 +88,7 @@ export function FolderBrowser({ onSelect, selectedPath, label }: Props) {
                 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors',
                 data.current_path.startsWith(drive)
                   ? 'bg-accent/10 text-accent'
-                  : 'text-text-secondary hover:bg-surface-hover',
+                  : 'text-text-secondary hover:bg-gray-100 dark:hover:bg-white/5',
               )}
             >
               <HardDrive className="w-3.5 h-3.5" />
@@ -99,7 +99,7 @@ export function FolderBrowser({ onSelect, selectedPath, label }: Props) {
       )}
 
       {/* Navigation */}
-      <div className="px-4 py-2 border-b border-border flex items-center gap-2">
+      <div className="px-4 py-2 border-b border-gray-100 dark:border-white/5 flex items-center gap-2">
         {data?.parent_path && (
           <button
             onClick={() => browse(data.parent_path!)}
@@ -114,7 +114,7 @@ export function FolderBrowser({ onSelect, selectedPath, label }: Props) {
         </span>
         <button
           onClick={handleSelectCurrent}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm bg-accent text-background font-medium hover:bg-accent-hover transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm bg-accent text-white font-medium hover:bg-accent-hover transition-colors"
         >
           <Check className="w-3.5 h-3.5" />
           Select
@@ -134,7 +134,7 @@ export function FolderBrowser({ onSelect, selectedPath, label }: Props) {
               <button
                 key={entry.path}
                 onClick={() => browse(entry.path)}
-                className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-surface-hover transition-colors text-left"
+                className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-left"
               >
                 <Folder className="w-4 h-4 text-accent shrink-0" />
                 <span className="text-sm flex-1 truncate">{entry.name}</span>
@@ -151,7 +151,7 @@ export function FolderBrowser({ onSelect, selectedPath, label }: Props) {
 
       {/* Selected path display */}
       {selectedPath && (
-        <div className="px-4 py-2.5 border-t border-border bg-accent/5">
+        <div className="px-4 py-2.5 border-t border-gray-100 dark:border-white/5 bg-accent/5">
           <div className="flex items-center gap-2">
             <FolderOpen className="w-4 h-4 text-accent" />
             <span className="text-sm text-accent truncate">{selectedPath}</span>

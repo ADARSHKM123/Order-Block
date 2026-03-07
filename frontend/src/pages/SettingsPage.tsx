@@ -32,7 +32,7 @@ function Slider({
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
-        <label className="text-sm font-medium">{label}</label>
+        <label className="text-sm font-medium text-text-primary">{label}</label>
         <span className="text-sm text-accent font-mono">{value}</span>
       </div>
       <input
@@ -42,7 +42,7 @@ function Slider({
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full h-1.5 bg-surface-active rounded-lg appearance-none cursor-pointer accent-accent"
+        className="w-full h-1.5 bg-gray-100 dark:bg-[#242428] rounded-lg appearance-none cursor-pointer accent-accent"
       />
       {description && (
         <p className="text-xs text-text-muted mt-1.5">{description}</p>
@@ -68,8 +68,8 @@ export function SettingsPage() {
         <div className="text-center py-20">
           <p className="text-text-muted mb-4">Create a session first from the Dashboard.</p>
           <button
-            onClick={() => navigate('/')}
-            className="px-4 py-2 bg-accent text-background rounded-lg font-medium"
+            onClick={() => navigate('/dashboard')}
+            className="px-4 py-2 bg-accent text-white rounded-full font-medium hover:bg-accent-hover transition-colors"
           >
             Go to Dashboard
           </button>
@@ -85,7 +85,7 @@ export function SettingsPage() {
       actions={
         <button
           onClick={resetSettings}
-          className="flex items-center gap-1.5 px-3 py-2 text-sm text-text-secondary hover:text-text-primary rounded-lg hover:bg-surface-hover transition-colors"
+          className="flex items-center gap-1.5 px-3 py-2 text-sm text-text-secondary hover:text-text-primary rounded-full hover:bg-gray-900/5 dark:hover:bg-white/5 transition-all duration-200"
         >
           <RotateCcw className="w-4 h-4" />
           Reset
@@ -94,8 +94,8 @@ export function SettingsPage() {
     >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Quality Thresholds */}
-        <div className="border border-border rounded-xl bg-surface p-6">
-          <h3 className="font-semibold mb-1">Quality Thresholds</h3>
+        <div className="rounded-2xl bg-white p-6 shadow-sm dark:bg-[#1a1a1e] dark:shadow-none dark:border dark:border-white/5">
+          <h3 className="font-semibold mb-1 text-text-primary">Quality Thresholds</h3>
           <p className="text-sm text-text-muted mb-6">
             Adjust how strictly images are categorized
           </p>
@@ -131,25 +131,25 @@ export function SettingsPage() {
         </div>
 
         {/* Clustering */}
-        <div className="border border-border rounded-xl bg-surface p-6">
-          <h3 className="font-semibold mb-1">Similarity Clustering</h3>
+        <div className="rounded-2xl bg-white p-6 shadow-sm dark:bg-[#1a1a1e] dark:shadow-none dark:border dark:border-white/5">
+          <h3 className="font-semibold mb-1 text-text-primary">Similarity Clustering</h3>
           <p className="text-sm text-text-muted mb-6">
             Group similar images together and auto-select the best one
           </p>
 
           {/* Cluster toggle */}
           <div className="flex items-center justify-between mb-6">
-            <span className="text-sm font-medium">Enable Clustering</span>
+            <span className="text-sm font-medium text-text-primary">Enable Clustering</span>
             <button
               onClick={() => updateSettings({ cluster: !settings.cluster })}
               className={cn(
                 'w-11 h-6 rounded-full transition-colors relative',
-                settings.cluster ? 'bg-accent' : 'bg-surface-active',
+                settings.cluster ? 'bg-accent' : 'bg-gray-200 dark:bg-[#242428]',
               )}
             >
               <span
                 className={cn(
-                  'absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform',
+                  'absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform shadow-sm',
                   settings.cluster ? 'translate-x-5.5' : 'translate-x-0.5',
                 )}
               />
@@ -163,10 +163,10 @@ export function SettingsPage() {
                 <button
                   onClick={() => updateSettings({ fast: false })}
                   className={cn(
-                    'flex flex-col items-center gap-2 p-4 rounded-xl border transition-colors',
+                    'flex flex-col items-center gap-2 p-4 rounded-xl border transition-all duration-200',
                     !settings.fast
                       ? 'border-accent bg-accent/5 text-accent'
-                      : 'border-border hover:border-border-hover',
+                      : 'border-gray-200 hover:border-gray-300 dark:border-white/10 dark:hover:border-white/20',
                   )}
                 >
                   <Brain className="w-6 h-6" />
@@ -176,10 +176,10 @@ export function SettingsPage() {
                 <button
                   onClick={() => updateSettings({ fast: true })}
                   className={cn(
-                    'flex flex-col items-center gap-2 p-4 rounded-xl border transition-colors',
+                    'flex flex-col items-center gap-2 p-4 rounded-xl border transition-all duration-200',
                     settings.fast
                       ? 'border-accent bg-accent/5 text-accent'
-                      : 'border-border hover:border-border-hover',
+                      : 'border-gray-200 hover:border-gray-300 dark:border-white/10 dark:hover:border-white/20',
                   )}
                 >
                   <Zap className="w-6 h-6" />
@@ -204,8 +204,8 @@ export function SettingsPage() {
         </div>
 
         {/* Performance */}
-        <div className="border border-border rounded-xl bg-surface p-6">
-          <h3 className="font-semibold mb-1">Performance</h3>
+        <div className="rounded-2xl bg-white p-6 shadow-sm dark:bg-[#1a1a1e] dark:shadow-none dark:border dark:border-white/5">
+          <h3 className="font-semibold mb-1 text-text-primary">Performance</h3>
           <p className="text-sm text-text-muted mb-6">
             Parallel processing and file handling
           </p>
@@ -220,8 +220,8 @@ export function SettingsPage() {
         </div>
 
         {/* File Handling */}
-        <div className="border border-border rounded-xl bg-surface p-6">
-          <h3 className="font-semibold mb-1">File Handling</h3>
+        <div className="rounded-2xl bg-white p-6 shadow-sm dark:bg-[#1a1a1e] dark:shadow-none dark:border dark:border-white/5">
+          <h3 className="font-semibold mb-1 text-text-primary">File Handling</h3>
           <p className="text-sm text-text-muted mb-6">
             How files are organized in the output folder
           </p>
@@ -229,10 +229,10 @@ export function SettingsPage() {
             <button
               onClick={() => updateSettings({ move: false })}
               className={cn(
-                'flex flex-col items-center gap-2 p-4 rounded-xl border transition-colors',
+                'flex flex-col items-center gap-2 p-4 rounded-xl border transition-all duration-200',
                 !settings.move
                   ? 'border-accent bg-accent/5 text-accent'
-                  : 'border-border hover:border-border-hover',
+                  : 'border-gray-200 hover:border-gray-300 dark:border-white/10 dark:hover:border-white/20',
               )}
             >
               <Copy className="w-6 h-6" />
@@ -242,10 +242,10 @@ export function SettingsPage() {
             <button
               onClick={() => updateSettings({ move: true })}
               className={cn(
-                'flex flex-col items-center gap-2 p-4 rounded-xl border transition-colors',
+                'flex flex-col items-center gap-2 p-4 rounded-xl border transition-all duration-200',
                 settings.move
                   ? 'border-accent bg-accent/5 text-accent'
-                  : 'border-border hover:border-border-hover',
+                  : 'border-gray-200 hover:border-gray-300 dark:border-white/10 dark:hover:border-white/20',
               )}
             >
               <Move className="w-6 h-6" />
@@ -259,7 +259,7 @@ export function SettingsPage() {
       {/* Start button */}
       <button
         onClick={handleStart}
-        className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-accent text-background text-base font-semibold hover:bg-accent-hover transition-colors shadow-lg shadow-accent/20"
+        className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-accent text-white text-base font-semibold hover:bg-accent-hover transition-all duration-200 shadow-lg shadow-accent/20"
       >
         <Play className="w-5 h-5" />
         Start Processing {currentSession.image_count} Images

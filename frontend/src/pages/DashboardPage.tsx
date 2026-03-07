@@ -55,11 +55,11 @@ export function DashboardPage() {
   }
 
   const statusConfig = {
-    pending: { icon: Clock, color: 'text-text-muted', bg: 'bg-surface-hover' },
+    pending: { icon: Clock, color: 'text-text-muted', bg: 'bg-gray-100 dark:bg-white/5' },
     processing: { icon: Loader2, color: 'text-accent', bg: 'bg-accent/10' },
     complete: { icon: CheckCircle2, color: 'text-good', bg: 'bg-good/10' },
     error: { icon: XCircle, color: 'text-overexposed', bg: 'bg-overexposed/10' },
-    cancelled: { icon: XCircle, color: 'text-text-muted', bg: 'bg-surface-hover' },
+    cancelled: { icon: XCircle, color: 'text-text-muted', bg: 'bg-gray-100 dark:bg-white/5' },
   }
 
   return (
@@ -82,7 +82,7 @@ export function DashboardPage() {
       </div>
 
       {error && (
-        <div className="mb-4 px-4 py-3 rounded-lg bg-overexposed/10 text-overexposed text-sm">
+        <div className="mb-4 px-4 py-3 rounded-2xl bg-overexposed/10 text-overexposed text-sm">
           {error}
         </div>
       )}
@@ -91,10 +91,10 @@ export function DashboardPage() {
         onClick={handleCreate}
         disabled={creating || !inputPath || !outputPath}
         className={cn(
-          'w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl text-base font-semibold transition-all',
+          'w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl text-base font-semibold transition-all duration-200',
           inputPath && outputPath
-            ? 'bg-accent text-background hover:bg-accent-hover shadow-lg shadow-accent/20'
-            : 'bg-surface-hover text-text-muted cursor-not-allowed',
+            ? 'bg-accent text-white hover:bg-accent-hover shadow-lg shadow-accent/20'
+            : 'bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-white/5 dark:text-gray-600',
         )}
       >
         {creating ? (
@@ -110,7 +110,7 @@ export function DashboardPage() {
       {/* Recent Sessions */}
       {sessions.length > 0 && (
         <div className="mt-12">
-          <h2 className="text-lg font-semibold mb-4">Recent Sessions</h2>
+          <h2 className="text-lg font-semibold mb-4 text-text-primary">Recent Sessions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {sessions.map((s) => {
               const cfg = statusConfig[s.status] || statusConfig.pending
@@ -118,13 +118,13 @@ export function DashboardPage() {
               return (
                 <div
                   key={s.id}
-                  className="group border border-border rounded-xl bg-surface hover:border-border-hover transition-colors cursor-pointer"
+                  className="group relative rounded-2xl bg-white shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer dark:bg-[#1a1a1e] dark:shadow-none dark:border dark:border-white/5"
                   onClick={() => handleResumeSession(s)}
                 >
-                  <div className="p-4">
+                  <div className="p-5">
                     <div className="flex items-start justify-between mb-3">
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium truncate">{s.name}</p>
+                      <div className="flex-1 min-w-0 pr-8">
+                        <p className="font-medium truncate text-text-primary">{s.name}</p>
                         <p className="text-xs text-text-muted mt-0.5">
                           {new Date(s.created_at).toLocaleDateString()}
                         </p>
@@ -144,17 +144,16 @@ export function DashboardPage() {
                       )}
                     </div>
                   </div>
-                  <div className="border-t border-border px-4 py-2 flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        deleteSession(s.id)
-                      }}
-                      className="text-text-muted hover:text-overexposed transition-colors p-1"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
+                  {/* Delete button - absolute positioned */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      deleteSession(s.id)
+                    }}
+                    className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500 transition-all dark:hover:bg-red-500/10"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               )
             })}

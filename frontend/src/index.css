@@ -1,15 +1,17 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
-  --color-background: #0a0a0b;
-  --color-surface: #141416;
-  --color-surface-hover: #1c1c1f;
-  --color-surface-active: #242428;
-  --color-border: #27272a;
-  --color-border-hover: #3f3f46;
-  --color-text-primary: #fafafa;
-  --color-text-secondary: #a1a1aa;
-  --color-text-muted: #71717a;
+  --color-background: #FAFAFA;
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #F5F5F5;
+  --color-surface-active: #EBEBEB;
+  --color-border: #E8E8EC;
+  --color-border-hover: #D4D4D8;
+  --color-text-primary: #111827;
+  --color-text-secondary: #6B7280;
+  --color-text-muted: #9CA3AF;
   --color-accent: #f59e0b;
   --color-accent-hover: #d97706;
   --color-good: #22c55e;
@@ -57,15 +59,15 @@
   background: var(--color-border-hover);
 }
 
-/* Light mode */
-.light {
-  --color-background: #ffffff;
-  --color-surface: #f4f4f5;
-  --color-surface-hover: #e4e4e7;
-  --color-surface-active: #d4d4d8;
-  --color-border: #e4e4e7;
-  --color-border-hover: #d4d4d8;
-  --color-text-primary: #09090b;
-  --color-text-secondary: #52525b;
-  --color-text-muted: #a1a1aa;
+/* Dark mode */
+.dark {
+  --color-background: #0a0a0b;
+  --color-surface: #141416;
+  --color-surface-hover: #1c1c1f;
+  --color-surface-active: #242428;
+  --color-border: #27272a;
+  --color-border-hover: #3f3f46;
+  --color-text-primary: #fafafa;
+  --color-text-secondary: #a1a1aa;
+  --color-text-muted: #71717a;
 }

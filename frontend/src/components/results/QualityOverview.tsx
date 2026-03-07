@@ -46,10 +46,10 @@ export function QualityOverview() {
                 key={cat.key}
                 onClick={() => setFilter(filter === cat.key ? 'all' : cat.key)}
                 className={cn(
-                  'flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors text-sm',
+                  'flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-200 text-sm',
                   filter === cat.key
                     ? 'border-current bg-current/5'
-                    : 'border-border hover:border-border-hover',
+                    : 'border-gray-200 hover:border-gray-300 dark:border-white/10 dark:hover:border-white/20',
                   cat.color,
                 )}
               >
@@ -65,7 +65,7 @@ export function QualityOverview() {
       {/* Sort controls */}
       <div className="flex items-center gap-3 mb-4">
         <span className="text-sm text-text-muted">{filtered.length} images</span>
-        <span className="text-border">·</span>
+        <span className="text-gray-300 dark:text-gray-600">·</span>
         <button
           onClick={() => { setSort('quality_score'); setSortDesc(true) }}
           className={cn('text-sm', sort === 'quality_score' ? 'text-accent' : 'text-text-muted hover:text-text-primary')}

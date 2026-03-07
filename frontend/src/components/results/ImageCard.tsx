@@ -29,12 +29,12 @@ export function ImageCard({ image, sessionId, selected, onClick, showScore = tru
   return (
     <div
       className={cn(
-        'group relative rounded-lg overflow-hidden border transition-all cursor-pointer',
-        selected ? 'border-accent ring-2 ring-accent/30' : 'border-border hover:border-border-hover',
+        'group relative rounded-lg overflow-hidden border transition-all duration-200 cursor-pointer',
+        selected ? 'border-accent ring-2 ring-accent/30' : 'border-gray-200/50 hover:shadow-md dark:border-white/5',
       )}
       onClick={onClick}
     >
-      <div className={cn('bg-surface-hover', sizeClass)}>
+      <div className={cn('bg-gray-100 dark:bg-[#1c1c1f]', sizeClass)}>
         <img
           src={api.imageUrl(sessionId, image.filename, 'thumb')}
           alt={image.filename}
@@ -67,7 +67,7 @@ export function ImageCard({ image, sessionId, selected, onClick, showScore = tru
       {selected && (
         <div className="absolute top-2 right-2">
           <div className="w-5 h-5 rounded-full bg-accent flex items-center justify-center">
-            <svg className="w-3 h-3 text-background" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
           </div>

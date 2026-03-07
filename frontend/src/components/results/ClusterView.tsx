@@ -65,11 +65,11 @@ export function ClusterView() {
         const currentBest = getBestPickName(id)
 
         return (
-          <div key={id} className="border border-border rounded-xl bg-surface overflow-hidden">
+          <div key={id} className="rounded-2xl bg-white shadow-sm overflow-hidden dark:bg-[#1a1a1e] dark:shadow-none dark:border dark:border-white/5">
             {/* Header */}
             <button
               onClick={() => toggleCluster(id)}
-              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-surface-hover transition-colors"
+              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
             >
               {isExpanded ? (
                 <ChevronDown className="w-4 h-4 text-text-muted" />
@@ -77,7 +77,7 @@ export function ClusterView() {
                 <ChevronRight className="w-4 h-4 text-text-muted" />
               )}
               <Layers className="w-4 h-4 text-accent" />
-              <span className="text-sm font-medium">
+              <span className="text-sm font-medium text-text-primary">
                 Group {String(Number(id) + 1).padStart(3, '0')}
               </span>
               <span className="text-xs text-text-muted">
@@ -94,7 +94,7 @@ export function ClusterView() {
 
             {/* Expanded: horizontal scroll of images */}
             {isExpanded && (
-              <div className="border-t border-border px-4 py-3">
+              <div className="border-t border-gray-100 dark:border-white/5 px-4 py-3">
                 <div className="flex gap-2 overflow-x-auto pb-2">
                   {members.map((member) => {
                     const isBest = member.filename === currentBest

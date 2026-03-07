@@ -12,7 +12,7 @@ interface SettingsState {
 
 export const useSettingsStore = create<SettingsState>((set) => ({
   settings: { ...DEFAULT_SETTINGS },
-  theme: 'dark',
+  theme: 'light',
 
   updateSettings: (partial) =>
     set((s) => ({ settings: { ...s.settings, ...partial } })),
@@ -21,8 +21,8 @@ export const useSettingsStore = create<SettingsState>((set) => ({
 
   toggleTheme: () =>
     set((s) => {
-      const next = s.theme === 'dark' ? 'light' : 'dark'
-      document.documentElement.classList.toggle('light', next === 'light')
+      const next = s.theme === 'light' ? 'dark' : 'light'
+      document.documentElement.classList.toggle('dark', next === 'dark')
       return { theme: next }
     }),
 }))

@@ -32,7 +32,7 @@ export function ResultsPage() {
       <PageContainer title="Results" subtitle="No session selected">
         <div className="text-center py-20">
           <p className="text-text-muted mb-4">Process images first from the Dashboard.</p>
-          <button onClick={() => navigate('/')} className="px-4 py-2 bg-accent text-background rounded-lg font-medium">
+          <button onClick={() => navigate('/dashboard')} className="px-4 py-2 bg-accent text-white rounded-full font-medium hover:bg-accent-hover transition-colors">
             Go to Dashboard
           </button>
         </div>
@@ -45,7 +45,7 @@ export function ResultsPage() {
       <PageContainer title="Results" subtitle="Processing not complete">
         <div className="text-center py-20">
           <p className="text-text-muted mb-4">Wait for processing to finish.</p>
-          <button onClick={() => navigate('/processing')} className="px-4 py-2 bg-accent text-background rounded-lg font-medium">
+          <button onClick={() => navigate('/processing')} className="px-4 py-2 bg-accent text-white rounded-full font-medium hover:bg-accent-hover transition-colors">
             View Progress
           </button>
         </div>
@@ -64,17 +64,17 @@ export function ResultsPage() {
         </span>
       }
     >
-      {/* Tabs */}
-      <div className="flex items-center gap-1 mb-6 border-b border-border">
+      {/* Pill Tabs */}
+      <div className="flex items-center gap-1 mb-8 bg-gray-100 dark:bg-[#1a1a1e] p-1 rounded-xl w-fit">
         {tabs.map(({ key, label, icon: Icon }) => (
           <button
             key={key}
             onClick={() => setActiveTab(key)}
             className={cn(
-              'flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors -mb-px',
+              'flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200',
               activeTab === key
-                ? 'border-accent text-accent'
-                : 'border-transparent text-text-muted hover:text-text-primary',
+                ? 'bg-white shadow-sm text-gray-900 dark:bg-[#242428] dark:text-white'
+                : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200',
             )}
           >
             <Icon className="w-4 h-4" />

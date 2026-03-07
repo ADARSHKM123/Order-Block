@@ -55,7 +55,6 @@ export function ProcessingPage() {
     }
   }
 
-  // Live stat counters from processedImages
   const liveCounts = useMemo(() => {
     const counts = { good: 0, blurry: 0, overexposed: 0, underexposed: 0 }
     for (const img of processedImages) {
@@ -71,7 +70,7 @@ export function ProcessingPage() {
       <PageContainer title="Processing" subtitle="No active session">
         <div className="text-center py-20">
           <p className="text-text-muted mb-4">Start from the Dashboard.</p>
-          <button onClick={() => navigate('/')} className="px-4 py-2 bg-accent text-background rounded-lg font-medium">
+          <button onClick={() => navigate('/dashboard')} className="px-4 py-2 bg-accent text-white rounded-full font-medium hover:bg-accent-hover transition-colors">
             Go to Dashboard
           </button>
         </div>
@@ -97,7 +96,7 @@ export function ProcessingPage() {
             : 'Processing complete'
       }
     >
-      {/* Compact phase indicators */}
+      {/* Phase indicators */}
       <div className="flex items-center justify-center gap-2 mb-6">
         {phases.map((phase, i) => {
           const isComplete = phaseStats[phase.key] != null
@@ -106,14 +105,14 @@ export function ProcessingPage() {
           return (
             <div key={phase.key} className="flex items-center">
               {i > 0 && (
-                <div className={cn('w-8 h-px mx-1', isComplete || isCurrent ? 'bg-accent' : 'bg-border')} />
+                <div className={cn('w-8 h-px mx-1', isComplete || isCurrent ? 'bg-accent' : 'bg-gray-200 dark:bg-white/10')} />
               )}
               <div
                 className={cn(
                   'w-9 h-9 rounded-full flex items-center justify-center border-2 transition-all',
                   isComplete && 'border-accent bg-accent/10 text-accent',
-                  isCurrent && 'border-accent bg-accent text-background',
-                  !isComplete && !isCurrent && 'border-border text-text-muted',
+                  isCurrent && 'border-accent bg-accent text-white',
+                  !isComplete && !isCurrent && 'border-gray-200 text-gray-400 dark:border-white/10 dark:text-gray-600',
                 )}
                 title={phase.label}
               >
@@ -128,7 +127,7 @@ export function ProcessingPage() {
       {warnings.length > 0 && (
         <div className="max-w-2xl mx-auto mb-4 space-y-2">
           {warnings.map((msg, i) => (
-            <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-sm">
+            <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-600 dark:text-yellow-500 text-sm">
               <AlertTriangle className="w-4 h-4 shrink-0" />
               <span>{msg}</span>
             </div>
@@ -139,7 +138,7 @@ export function ProcessingPage() {
       {/* Error banner */}
       {errorMessage && !isProcessing && (
         <div className="max-w-2xl mx-auto mb-4">
-          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+          <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-sm">
             <XCircle className="w-4 h-4 shrink-0" />
             <span>{errorMessage}</span>
           </div>
@@ -157,7 +156,7 @@ export function ProcessingPage() {
             </span>
             <span className="text-accent font-mono font-medium">{pct}%</span>
           </div>
-          <div className="h-1.5 bg-surface-active rounded-full overflow-hidden">
+          <div className="h-1.5 bg-gray-100 dark:bg-[#242428] rounded-full overflow-hidden">
             <div
               className="h-full bg-accent rounded-full transition-all duration-200"
               style={{ width: `${pct}%` }}
@@ -177,7 +176,7 @@ export function ProcessingPage() {
                 key={cat}
                 className={cn(
                   'flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all',
-                  count > 0 ? colors.bg : 'bg-surface',
+                  count > 0 ? colors.bg : 'bg-gray-50 dark:bg-[#1a1a1e]',
                 )}
               >
                 <span className={cn('w-2 h-2 rounded-full', colors.dot)} />
@@ -191,7 +190,7 @@ export function ProcessingPage() {
         </div>
       )}
 
-      {/* Clustering phase: special visualization */}
+      {/* Clustering phase visualization */}
       {isClusterPhase && (
         <div className="max-w-md mx-auto text-center py-8">
           <div className="relative w-20 h-20 mx-auto mb-4">
@@ -212,7 +211,7 @@ export function ProcessingPage() {
         </div>
       )}
 
-      {/* LIVE IMAGE MOSAIC */}
+      {/* Live image mosaic */}
       {processedImages.length > 0 && (isQualityPhase || phaseStats.quality) && (
         <div className="mt-4">
           <div className="grid gap-1" style={{
@@ -223,7 +222,7 @@ export function ProcessingPage() {
               return (
                 <div
                   key={img.filename}
-                  className="relative aspect-square rounded-md overflow-hidden bg-surface-hover group"
+                  className="relative aspect-square rounded-md overflow-hidden bg-gray-100 dark:bg-[#1c1c1f] group"
                 >
                   <img
                     src={api.imageUrl(currentSession.id, img.filename, 'thumb')}
@@ -234,9 +233,7 @@ export function ProcessingPage() {
                       e.currentTarget.style.display = 'none'
                     }}
                   />
-                  {/* Category dot */}
                   <div className={cn('absolute top-1 right-1 w-2.5 h-2.5 rounded-full border border-black/30', colors.dot)} />
-                  {/* Score overlay on hover */}
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <span className="text-xs font-bold text-white">{img.score}</span>
                   </div>
@@ -247,7 +244,7 @@ export function ProcessingPage() {
         </div>
       )}
 
-      {/* Phase completion stats (shown when done) */}
+      {/* Phase completion stats */}
       {Object.keys(phaseStats).length > 0 && !isProcessing && (
         <div className="max-w-xl mx-auto mt-8 space-y-2">
           {phaseStats.quality && (
@@ -282,7 +279,7 @@ export function ProcessingPage() {
         <div className="max-w-xs mx-auto mt-8">
           <button
             onClick={handleCancel}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-border text-sm text-text-muted hover:text-overexposed hover:border-overexposed/50 transition-colors"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-full border border-gray-200 dark:border-white/10 text-sm text-text-muted hover:text-overexposed hover:border-overexposed/50 transition-all duration-200"
           >
             <StopCircle className="w-4 h-4" />
             Cancel
