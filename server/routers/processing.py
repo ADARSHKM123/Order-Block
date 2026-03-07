@@ -23,6 +23,10 @@ router = APIRouter(prefix="/api", tags=["processing"])
 # Track active processing tasks
 _active_tasks: Dict[str, ProcessingService] = {}
 
+# Store terminal events so late-connecting WebSocket clients can receive them.
+# Prevents race condition where pipeline finishes before WebSocket connects.
+_final_events: Dict[str, dict] = {}
+
 
 @router.post("/sessions/{session_id}/process")
 async def start_processing(
@@ -40,6 +44,9 @@ async def start_processing(
 
     update_session_status(db, session_id, "processing")
 
+    # Clear any stale final event from a previous run
+    _final_events.pop(session_id, None)
+
     # Run in background
     service = ProcessingService()
     _active_tasks[session_id] = service
@@ -47,6 +54,13 @@ async def start_processing(
     asyncio.create_task(_run_processing(session_id, session, req))
 
     return {"ok": True, "message": "Processing started"}
+
+
+async def _emit_to_queues(session_id: str, event: dict):
+    """Send an event to all connected WebSocket clients for this session."""
+    if session_id in _progress_queues:
+        for q in _progress_queues[session_id]:
+            await q.put(event)
 
 
 async def _run_processing(session_id: str, session, req: StartProcessingRequest):
@@ -60,10 +74,7 @@ async def _run_processing(session_id: str, session, req: StartProcessingRequest)
         settings_dict = req.settings.model_dump()
 
         async def progress_callback(event: dict):
-            # Store events for WebSocket clients to pick up
-            if session_id in _progress_queues:
-                for q in _progress_queues[session_id]:
-                    await q.put(event)
+            await _emit_to_queues(session_id, event)
 
         result = await service.run_pipeline(
             input_dir=session.input_path,
@@ -83,12 +94,18 @@ async def _run_processing(session_id: str, session, req: StartProcessingRequest)
             settings_dict=settings_dict,
         )
 
+        # Always store & emit a terminal event (safety net for race condition)
+        final = {"type": "pipeline_complete", "summary": result.get("summary")}
+        _final_events[session_id] = final
+        await _emit_to_queues(session_id, final)
+
     except Exception as e:
         logger.error(f"Processing error for session {session_id}: {e}")
         update_session_status(db, session_id, "error")
-        if session_id in _progress_queues:
-            for q in _progress_queues[session_id]:
-                await q.put({"type": "error", "message": str(e)})
+        final = {"type": "error", "message": str(e)}
+        _final_events[session_id] = final
+        await _emit_to_queues(session_id, final)
+
     finally:
         _active_tasks.pop(session_id, None)
         db.close()
@@ -114,6 +131,12 @@ _progress_queues: Dict[str, list] = {}
 async def websocket_progress(websocket: WebSocket, session_id: str):
     """Stream processing progress via WebSocket."""
     await websocket.accept()
+
+    # Check if pipeline already finished before we connected (race condition fix)
+    if session_id in _final_events:
+        await websocket.send_json(_final_events.pop(session_id))
+        await websocket.close()
+        return
 
     queue: asyncio.Queue = asyncio.Queue()
     if session_id not in _progress_queues:

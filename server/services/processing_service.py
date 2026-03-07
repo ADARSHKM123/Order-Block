@@ -280,6 +280,7 @@ class ProcessingService:
 
         if not fast:
             try:
+                import torch  # noqa: F401 – probe: CLIP path requires torch
                 from order_block.similarity.embeddings import extract_embeddings as _ee
                 from order_block.similarity.clustering import cluster_embeddings as _ce
                 _extract_embeddings = _ee

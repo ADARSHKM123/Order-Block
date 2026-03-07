@@ -12,6 +12,7 @@ import {
   Loader2,
   StopCircle,
   AlertTriangle,
+  XCircle,
 } from 'lucide-react'
 import { api } from '@/api/client'
 
@@ -32,7 +33,7 @@ export function ProcessingPage() {
   const navigate = useNavigate()
   const {
     currentSession, isProcessing, progress, phaseStats,
-    handleProgressEvent, setProcessing, loadResults, processedImages, warnings,
+    handleProgressEvent, setProcessing, loadResults, processedImages, warnings, errorMessage,
   } = useSessionStore()
 
   const onEvent = useCallback(
@@ -91,7 +92,9 @@ export function ProcessingPage() {
       subtitle={
         isProcessing
           ? `Analyzing ${currentSession.image_count} images...`
-          : 'Processing complete'
+          : errorMessage
+            ? 'Processing failed'
+            : 'Processing complete'
       }
     >
       {/* Compact phase indicators */}
@@ -130,6 +133,16 @@ export function ProcessingPage() {
               <span>{msg}</span>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Error banner */}
+      {errorMessage && !isProcessing && (
+        <div className="max-w-2xl mx-auto mb-4">
+          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+            <XCircle className="w-4 h-4 shrink-0" />
+            <span>{errorMessage}</span>
+          </div>
         </div>
       )}
 
